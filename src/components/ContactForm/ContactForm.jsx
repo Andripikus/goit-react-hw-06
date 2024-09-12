@@ -1,9 +1,14 @@
 import React from "react";
+import { useDispatch } from "react-redux";
+import { addContact } from "../../redux/contactsSlice";
+import { nanoid } from "nanoid";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import styles from "./ContactForm.module.css";
+import css from "./ContactForm.module.css";
 
-export default function ContactForm({ onAddContact }) {
+export default function ContactForm() {
+  const dispatch = useDispatch();
+
   const validationSchema = Yup.object({
     name: Yup.string()
       .min(3, "Name must be at least 3 characters")
@@ -17,48 +22,48 @@ export default function ContactForm({ onAddContact }) {
       .required("Phone number is required"),
   });
 
+  const handleSubmit = (values, { resetForm }) => {
+    dispatch(
+      addContact({ id: nanoid(), name: values.name, number: values.number })
+    );
+    resetForm();
+  };
+
   return (
     <Formik
       initialValues={{ name: "", number: "" }}
       validationSchema={validationSchema}
-      onSubmit={(values, { resetForm }) => {
-        onAddContact(values.name, values.number);
-        resetForm();
-      }}
+      onSubmit={handleSubmit}
     >
       {({ errors, touched }) => (
-        <Form className={styles.form}>
-          <label className={styles.label} htmlFor="name">
+        <Form className={css.form}>
+          <label className={css.label} htmlFor="name">
             Name:
           </label>
           <Field
             id="name"
-            className={`${styles.input} ${
-              errors.name && touched.name ? styles.errorInput : ""
+            className={`${css.input} ${
+              errors.name && touched.name ? css.errorInput : ""
             }`}
             name="name"
             type="text"
             placeholder="Enter contact name"
           />
-          <ErrorMessage className={styles.error} name="name" component="span" />
-          <label className={styles.label} htmlFor="number">
+          <ErrorMessage className={css.error} name="name" component="span" />
+          <label className={css.label} htmlFor="number">
             Number:
           </label>
           <Field
             id="number"
-            className={`${styles.input} ${
-              errors.number && touched.number ? styles.errorInput : ""
+            className={`${css.input} ${
+              errors.number && touched.number ? css.errorInput : ""
             }`}
             name="number"
             type="text"
             placeholder="Enter phone number (xxx-xx-xx)"
           />
-          <ErrorMessage
-            className={styles.error}
-            name="number"
-            component="span"
-          />
-          <button className={styles.button} type="submit">
+          <ErrorMessage className={css.error} name="number" component="span" />
+          <button className={css.button} type="submit">
             Add contact
           </button>
         </Form>
