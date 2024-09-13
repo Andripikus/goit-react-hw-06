@@ -9,23 +9,22 @@ import {
   PURGE,
   REGISTER,
 } from "redux-persist";
-import storage from "redux-persist/lib/storage"; // використовуємо localStorage
+import storage from "redux-persist/lib/storage";
 import contactsReducer from "./contactsSlice";
 import filtersReducer from "./filtersSlice";
 import { combineReducers } from "redux";
 
 const persistConfig = {
-  key: 'contacts',
+  key: "contacts",
   storage,
-  whitelist: ['contacts'], // Зберігаємо тільки контакти
+  whitelist: ["items"],
 };
 
 const rootReducer = combineReducers({
   contacts: persistReducer(persistConfig, contactsReducer),
-  filters: filtersReducer, // Не зберігаємо фільтр
+  filters: filtersReducer,
 });
 
-// Створюємо store
 export const store = configureStore({
   reducer: rootReducer,
   middleware: (getDefaultMiddleware) =>
@@ -36,5 +35,4 @@ export const store = configureStore({
     }),
 });
 
-// Створюємо persistor
 export const persistor = persistStore(store);
